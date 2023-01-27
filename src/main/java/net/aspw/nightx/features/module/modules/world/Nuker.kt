@@ -1,4 +1,3 @@
-
 package net.aspw.nightx.features.module.modules.world
 
 import net.aspw.nightx.NightX
@@ -7,7 +6,7 @@ import net.aspw.nightx.event.UpdateEvent
 import net.aspw.nightx.features.module.Module
 import net.aspw.nightx.features.module.ModuleCategory
 import net.aspw.nightx.features.module.ModuleInfo
-import net.aspw.nightx.features.module.modules.utility.AutoTool
+import net.aspw.nightx.features.module.modules.misc.AutoTool
 import net.aspw.nightx.utils.RotationUtils
 import net.aspw.nightx.utils.block.BlockUtils.getCenterDistance
 import net.aspw.nightx.utils.block.BlockUtils.searchBlocks

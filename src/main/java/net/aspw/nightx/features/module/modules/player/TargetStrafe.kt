@@ -18,6 +18,8 @@ import net.aspw.nightx.value.ListValue
 import net.minecraft.entity.Entity
 import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.MathHelper
+import org.lwjgl.input.Keyboard
+import java.util.*
 
 @ModuleInfo(name = "TargetStrafe", spacedName = "Target Strafe", category = ModuleCategory.PLAYER)
 class TargetStrafe : Module() {
@@ -101,8 +103,8 @@ class TargetStrafe : Module() {
 
 
     val keyMode: Boolean
-        get() = when (modeValue.get().toLowerCase()) {
-            "jump" -> mc.gameSettings.keyBindJump.isKeyDown
+        get() = when (modeValue.get().lowercase(Locale.getDefault())) {
+            "jump" -> Keyboard.isKeyDown(Keyboard.KEY_SPACE)
             "none" -> mc.thePlayer.movementInput.moveStrafe != 0f || mc.thePlayer.movementInput.moveForward != 0f
             else -> false
         }

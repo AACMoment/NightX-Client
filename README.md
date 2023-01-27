@@ -1,6 +1,7 @@
 # NightX Client (LiquidBounce Custom Build)
 
-#IT IS NOT RATTED!
+Why i should be NightX Developer?
+>https://www.youtube.com/watch?v=8q8pYpbslwg
 
 If you have request and issue -> Join discord server to support! ↓
 >https://nightx.api-minecraft.net/s/rgul30dkqw

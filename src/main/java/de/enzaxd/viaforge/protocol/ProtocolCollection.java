@@ -3,11 +3,13 @@ package de.enzaxd.viaforge.protocol;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 public enum ProtocolCollection {
+    R1_19_2(new ProtocolVersion(761, "1.19.3")),
+    R1_19_1(new ProtocolVersion(760, "1.19.1-1.19.2")),
     R1_19(new ProtocolVersion(759, "1.19")),
 
     R1_18_2(new ProtocolVersion(758, "1.18.2")),
     R1_18_1(new ProtocolVersion(757, "1.18-1.18.1")),
-    
+
     R1_17_1(new ProtocolVersion(756, "1.17.1")),
     R1_17(new ProtocolVersion(755, "1.17")),
 
@@ -47,14 +49,10 @@ public enum ProtocolCollection {
 
     R1_8(new ProtocolVersion(47, "1.8.x"));
 
-    private ProtocolVersion version;
+    private final ProtocolVersion version;
 
-    private ProtocolCollection(ProtocolVersion version) {
+    ProtocolCollection(ProtocolVersion version) {
         this.version = version;
-    }
-
-    public ProtocolVersion getVersion() {
-        return version;
     }
 
     public static ProtocolVersion getProtocolById(int id) {
@@ -62,5 +60,9 @@ public enum ProtocolCollection {
             if (coll.getVersion().getVersion() == id)
                 return coll.getVersion();
         return null;
+    }
+
+    public ProtocolVersion getVersion() {
+        return version;
     }
 }

@@ -2,8 +2,8 @@ package net.aspw.nightx.injection.forge.mixins.item;
 
 import net.aspw.nightx.NightX;
 import net.aspw.nightx.features.module.modules.client.Animations;
+import net.aspw.nightx.features.module.modules.client.AntiNausea;
 import net.aspw.nightx.features.module.modules.combat.KillAura;
-import net.aspw.nightx.features.module.modules.cool.AntiNausea;
 import net.aspw.nightx.utils.timer.MSTimer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -313,11 +313,11 @@ public abstract class MixinItemRenderer {
             if (this.itemToRender.getItem() instanceof ItemMap) {
                 this.renderItemMap(abstractclientplayer, f2, f, f1);
             } else if (abstractclientplayer.getItemInUseCount() > 0
-                    || (itemToRender.getItem() instanceof ItemSword && (killAura.getTarget() != null || killAura.getFakeBlock()))
+                    || (itemToRender.getItem() instanceof ItemSword && (killAura.getBlockingStatus() || killAura.getFakeBlock()))
                     || (itemToRender.getItem() instanceof ItemSword && NightX.moduleManager.getModule(Animations.class).getState()
                     && Animations.fakeBlock.get() && killAura.getTarget() != null)) {
 
-                EnumAction enumaction = (killAura.getTarget() != null) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction();
+                EnumAction enumaction = (killAura.getBlockingStatus()) ? EnumAction.BLOCK : this.itemToRender.getItemUseAction();
 
                 switch (enumaction) {
                     case NONE:
@@ -335,6 +335,18 @@ public abstract class MixinItemRenderer {
                         if (NightX.moduleManager.getModule(Animations.class).getState() && NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("sloth")) {
                             GL11.glTranslated(Animations.blockPosX.get().doubleValue() + 0.11, Animations.blockPosY.get().doubleValue() + 0.06, Animations.blockPosZ.get().doubleValue() - 0.24);
                             this.func_178096_b(f, f1);
+                            if (Animations.RotateItems.get())
+                                rotateItemAnim();
+
+                            this.func_178103_d();
+                            if (Animations.RotateItems.get())
+                                rotateItemAnim();
+                            break;
+                        }
+
+                        if (NightX.moduleManager.getModule(Animations.class).getState() && NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("shield")) {
+                            GL11.glTranslated(Animations.blockPosX.get().doubleValue(), Animations.blockPosY.get().doubleValue() + 0.27, Animations.blockPosZ.get().doubleValue() + 0.06);
+                            this.shield(0.0f, f1);
                             if (Animations.RotateItems.get())
                                 rotateItemAnim();
 
@@ -432,7 +444,7 @@ public abstract class MixinItemRenderer {
                             break;
                         }
 
-                        if (NightX.moduleManager.getModule(Animations.class).getState() && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("reverse") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("jigsaw") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("spin") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("old") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("oldfull") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("sloth") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("smooth") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("swingfull") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("autumn")) {
+                        if (NightX.moduleManager.getModule(Animations.class).getState() && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("reverse") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("shield") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("jigsaw") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("spin") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("old") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("oldfull") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("sloth") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("smooth") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("swingfull") && !NightX.moduleManager.getModule(Animations.class).Sword.get().equalsIgnoreCase("autumn")) {
                             GL11.glTranslated(Animations.blockPosX.get().doubleValue(), Animations.blockPosY.get().doubleValue() + 0.12, Animations.blockPosZ.get().doubleValue() + 0.06);
                             final String z = Animations.Sword.get();
                             switch (z) {
@@ -448,16 +460,6 @@ public abstract class MixinItemRenderer {
                                 }
                                 case "SlideMedium": {
                                     this.slide3(f, f1);
-                                    if (Animations.RotateItems.get())
-                                        rotateItemAnim();
-
-                                    this.func_178103_d();
-                                    if (Animations.RotateItems.get())
-                                        rotateItemAnim();
-                                    break;
-                                }
-                                case "Shield": {
-                                    this.shield(0.0f, f1);
                                     if (Animations.RotateItems.get())
                                         rotateItemAnim();
 
@@ -513,15 +515,6 @@ public abstract class MixinItemRenderer {
                                     GlStateManager.rotate(Swang * -35.0F / 2.0F, -Swang, -0.0F, 9.0F);
                                     GlStateManager.rotate(Swang * 40.0F, 1.0F, -Swang / 2.0F, -0.0F);
                                     doBlockTransformations();
-                                    break;
-                                }
-                                case "Dash": {
-                                    this.transformFirstPersonItem(f / Animations.Equip.getValue(), 0.0F);
-                                    GL11.glTranslated(-0.05D, 0.0D, -0.02D);
-                                    float var9 = MathHelper.sin(MathHelper.sqrt_float(f1) * 3.1415927F);
-                                    GL11.glRotated(-var9 * 60.0F / 2.0F, -var9 / 2.0F, -0.0F, 9.0F);
-                                    GL11.glRotated(-var9 * 53.0F, 1.0F, var9 / 2.0F, -0.0F);
-                                    this.func_178103_d(0.2F);
                                     break;
                                 }
                                 case "Ninja": {
@@ -609,8 +602,8 @@ public abstract class MixinItemRenderer {
                                     float var9 = MathHelper.sin(MathHelper.sqrt_float(this.mc.thePlayer.getSwingProgress(partialTicks)) * 3.1415927F);
                                     GL11.glTranslated(0.0D, 0.0D, 0.0D);
                                     this.transformFirstPersonItem(f / 1000.0F, 0.0f);
-                                    GlStateManager.rotate(-var9 * -28.0F, var9 / 2.0F, 1.0F, 4.0F);
-                                    GlStateManager.rotate(-var9 * -5.0F, 1.0F, var9 / 3.0F, -0.0F);
+                                    GlStateManager.rotate(-var9 * -24.0F, var9 / 2.0F, 1.0F, 4.0F);
+                                    GlStateManager.rotate(-var9 * -12.0F, 1.0F, var9 / 3.0F, -0.0F);
                                     this.func_178103_d(0.2F);
                                     break;
                                 }
@@ -787,6 +780,15 @@ public abstract class MixinItemRenderer {
                                     float Swang = MathHelper.sin(MathHelper.sqrt_float(f1) * 3.1415927F);
                                     GlStateManager.rotate(Swang * 25.0F / 2.0F, -Swang, -0.0F, 9.0F);
                                     GlStateManager.rotate(Swang * 15.0F, 1.0F, -Swang / 2.0F, -0.0F);
+                                    doBlockTransformations();
+                                    break;
+                                }
+                                case "Edit": {
+                                    transformFirstPersonItem(f / Animations.Equip.getValue(), f1);
+                                    GL11.glTranslated(0.0D, 0.0D, 0.0D);
+                                    float Swang = MathHelper.sin(MathHelper.sqrt_float(f1) * 3.1415927F);
+                                    GlStateManager.rotate(Swang * 30.0F / 2.0F, -Swang, -0.0F, 9.0F);
+                                    GlStateManager.rotate(Swang * 30.0F, 1.0F, -Swang / 2.0F, -0.0F);
                                     doBlockTransformations();
                                     break;
                                 }

@@ -157,8 +157,7 @@ class NoSlow : Module() {
         if (modeValue.get().equals(
                 "blink",
                 true
-            ) && !(killAura.state && !NightX.moduleManager[KillAura::class.java]!!.autoBlockModeValue.get()
-                .equals("None")) && mc.thePlayer.itemInUse != null && mc.thePlayer.itemInUse.item != null
+            ) && !(killAura.state && killAura.blockingStatus) && mc.thePlayer.itemInUse != null && mc.thePlayer.itemInUse.item != null
         ) {
             val item = mc.thePlayer.itemInUse.item
             if (mc.thePlayer.isUsingItem && (item is ItemFood || item is ItemBucketMilk || item is ItemPotion) && (!ciucValue.get() || mc.thePlayer.itemInUseCount >= 1)) {
@@ -220,14 +219,12 @@ class NoSlow : Module() {
         if (!MovementUtils.isMoving() && !modeValue.get().equals("blink", true))
             return
 
-        val heldItem = mc.thePlayer.heldItem
         val killAura = NightX.moduleManager[KillAura::class.java]!!
 
         when (modeValue.get().lowercase(Locale.getDefault())) {
-            "aac5" -> if (event.eventState == EventState.POST && (mc.thePlayer.isUsingItem || mc.thePlayer.isBlocking || !NightX.moduleManager[KillAura::class.java]!!.autoBlockModeValue.get()
-                    .equals("None"))
+            "aac5" -> if (event.eventState == EventState.POST && (mc.thePlayer.isUsingItem || mc.thePlayer.isBlocking || killAura.blockingStatus)
             ) {
-                mc.netHandler.addToSendQueue(
+                PacketUtils.sendPacketNoEvent(
                     C08PacketPlayerBlockPlacement(
                         BlockPos(-1, -1, -1),
                         255,
@@ -239,7 +236,7 @@ class NoSlow : Module() {
                 )
             }
 
-            "watchdog" -> if (testValue.get() && (!killAura.state)
+            "watchdog" -> if (testValue.get() && (!killAura.state || !killAura.blockingStatus)
                 && event.eventState == EventState.PRE
                 && mc.thePlayer.itemInUse != null && mc.thePlayer.itemInUse.item != null
             ) {
@@ -288,9 +285,8 @@ class NoSlow : Module() {
             }
 
             else -> {
-                if (!mc.thePlayer.isBlocking)
+                if (!mc.thePlayer.isBlocking && !killAura.blockingStatus)
                     return
-                val item = mc.thePlayer.itemInUse.item
                 when (modeValue.get().lowercase(Locale.getDefault())) {
                     "aac" -> {
                         if (mc.thePlayer.ticksExisted % 3 == 0)

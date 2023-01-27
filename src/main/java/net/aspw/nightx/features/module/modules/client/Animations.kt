@@ -42,13 +42,13 @@ class Animations : Module() {
                 "SlideFull",
                 "SlidePut",
                 "Push",
-                "Dash",
                 "Swing",
                 "SwingFull",
                 "Swank",
                 "Swang",
                 "Swaing",
                 "Stella",
+                "Edit",
                 "Smart",
                 "Sloth",
                 "Autumn",
@@ -129,8 +129,9 @@ class Animations : Module() {
                 .equals("swang", ignoreCase = true) ||
                     Sword.get().equals("astolfo", ignoreCase = true) ||
                     Sword.get().equals("swaing", ignoreCase = true) || Sword.get()
-                .equals("dash", ignoreCase = true) || Sword.get().equals("smart", ignoreCase = true) || Sword.get()
+                .equals("smart", ignoreCase = true) || Sword.get()
                 .equals("moon", ignoreCase = true) || Sword.get().equals("dortware1", ignoreCase = true) || Sword.get()
+                .equals("edit", ignoreCase = true) || Sword.get()
                 .equals("dortware2", ignoreCase = true)
         }
 
